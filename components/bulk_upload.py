@@ -51,15 +51,22 @@ def show_url_preview(urls: List[str], max_preview: int = 5) -> None:
 def render_upload_section():
     """Render the bulk upload section"""
     st.markdown("""
-    <div style='background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;'>
-        <h3 style='margin-top: 0;'>Bulk URL Analysis</h3>
-        <p>Upload a file containing URLs to analyze multiple websites at once.</p>
-        <p>Supported formats:</p>
-        <ul>
-            <li>CSV file (URLs in first column)</li>
-            <li>Excel file (URLs in first column)</li>
-            <li>Text file (one URL per line)</li>
-        </ul>
+    <div class="features-box">
+        <h3>Bulk URL Analysis</h3>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <span class="feature-icon">📊</span>
+                <span class="feature-text">CSV file (URLs in first column)</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📑</span>
+                <span class="feature-text">Excel file (URLs in first column)</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📝</span>
+                <span class="feature-text">Text file (one URL per line)</span>
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
