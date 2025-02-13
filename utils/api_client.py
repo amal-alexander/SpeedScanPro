@@ -9,9 +9,14 @@ class PageSpeedInsightsAPI:
         if not self.api_key:
             raise Exception("PageSpeed API key not found. Please set the PAGESPEED_API_KEY environment variable.")
 
+        # Define a legitimate browser user agent
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+
     @staticmethod
     @st.cache_data(ttl=3600, show_spinner=False)
-    def _fetch_metrics(base_url: str, api_key: str, url: str, strategy: str = "desktop"):
+    def _fetch_metrics(base_url: str, api_key: str, url: str, strategy: str = "desktop", headers: dict = None):
         """
         Cached function to fetch PageSpeed Insights metrics
         """
@@ -23,7 +28,7 @@ class PageSpeedInsightsAPI:
         }
 
         try:
-            response = requests.get(base_url, params=params)
+            response = requests.get(base_url, params=params, headers=headers)
             response.raise_for_status()
             data = response.json()
 
@@ -69,4 +74,4 @@ class PageSpeedInsightsAPI:
         """
         Public method to get PageSpeed Insights metrics
         """
-        return self._fetch_metrics(self.base_url, self.api_key, url, strategy)
+        return self._fetch_metrics(self.base_url, self.api_key, url, strategy, self.headers)
