@@ -42,7 +42,7 @@ class PageSpeedInsightsAPI:
                             'score': data['lighthouseResult']['categories']['accessibility']['score']
                         },
                         'best-practices': {
-                            'score': data['lighthouseResult']['categories']['best-practices']['score']
+                            'score': data['lighthouseResult']['categories']['bestPractices']['score']
                         },
                         'seo': {
                             'score': data['lighthouseResult']['categories']['seo']['score']

@@ -31,20 +31,20 @@ def create_comparison_chart(desktop_data: dict, mobile_data: dict):
     """Create comparison chart for desktop vs mobile metrics"""
     categories = ['Performance', 'Accessibility', 'Best Practices', 'SEO']
     desktop_scores = [
-        desktop_data['lighthouse_result']['categories'][cat.lower()]['score'] * 100 
+        desktop_data['lighthouse_result']['categories'][cat.lower().replace(' ', '')]['score'] * 100 
         for cat in categories
     ]
     mobile_scores = [
-        mobile_data['lighthouse_result']['categories'][cat.lower()]['score'] * 100 
+        mobile_data['lighthouse_result']['categories'][cat.lower().replace(' ', '')]['score'] * 100 
         for cat in categories
     ]
-    
+
     df = pd.DataFrame({
         'Category': categories * 2,
         'Score': desktop_scores + mobile_scores,
         'Device': ['Desktop'] * 4 + ['Mobile'] * 4
     })
-    
+
     fig = px.bar(
         df,
         x='Category',
@@ -53,5 +53,5 @@ def create_comparison_chart(desktop_data: dict, mobile_data: dict):
         barmode='group',
         title='Desktop vs Mobile Comparison'
     )
-    
+
     return fig
