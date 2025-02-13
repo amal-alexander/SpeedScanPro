@@ -1,5 +1,6 @@
 
 import streamlit as st
+import pandas as pd
 from utils.visualization import create_score_gauge, create_comparison_chart
 
 def display_metrics(desktop_results: dict, mobile_results: dict):
