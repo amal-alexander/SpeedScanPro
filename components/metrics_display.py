@@ -48,9 +48,8 @@ def display_metrics(desktop_results: dict, mobile_results: dict):
             fig = create_score_gauge(performance, f"{device_type} Performance Score")
             st.plotly_chart(fig, use_container_width=True)
 
-        st.markdown("<div class='metric-container'>", unsafe_allow_html=True)
         st.markdown("### Performance Metrics")
-        metrics_data = {
+        metrics_df = pd.DataFrame({
             "Metric": [
                 "First Contentful Paint (FCP)",
                 "Largest Contentful Paint (LCP)",
@@ -78,13 +77,15 @@ def display_metrics(desktop_results: dict, mobile_results: dict):
                 "N/A",
                 f"{int(metrics['cumulative-layout-shift']['score'] * 100)}%"
             ]
-        }
-        st.dataframe(metrics_data, use_container_width=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+        })
+        st.table(metrics_df.style.set_properties(**{
+            'text-align': 'left',
+            'font-size': '14px',
+            'padding': '10px'
+        }))
 
-        st.markdown("<div class='metric-container'>", unsafe_allow_html=True)
         st.markdown("### Overall Scores")
-        scores_data = {
+        scores_df = pd.DataFrame({
             "Category": ["Performance", "SEO", "Accessibility", "Best Practices"],
             "Score": [
                 f"{int(categories['performance']['score'] * 100)}%",
@@ -92,9 +93,12 @@ def display_metrics(desktop_results: dict, mobile_results: dict):
                 f"{int(categories['accessibility']['score'] * 100)}%",
                 f"{int(categories['best-practices']['score'] * 100)}%"
             ]
-        }
-        st.dataframe(scores_data, use_container_width=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+        })
+        st.table(scores_df.style.set_properties(**{
+            'text-align': 'left',
+            'font-size': '14px',
+            'padding': '10px'
+        }))
 
     with tab2:
         display_detailed_metrics(desktop_results, "Desktop")
