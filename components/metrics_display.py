@@ -3,30 +3,31 @@ from utils.visualization import create_score_gauge, create_comparison_chart
 
 def display_metrics(desktop_results: dict, mobile_results: dict):
     """Display the analysis metrics with visualizations"""
-    
+
     # Create tabs for desktop and mobile views
     tab1, tab2, tab3 = st.tabs(["Overview", "Desktop Metrics", "Mobile Metrics"])
-    
+
     with tab1:
         st.subheader("Performance Overview")
         comparison_chart = create_comparison_chart(desktop_results, mobile_results)
         st.plotly_chart(comparison_chart, use_container_width=True)
-    
+
     with tab2:
         st.subheader("Desktop Analysis")
-        col1, col2 = st.columns(2)
-        
+        use_wide_layout = st.checkbox("Use wide layout", value=True)
+        col1, col2 = st.columns([1, 1]) if use_wide_layout else st.columns([1])
+
         with col1:
             desktop_performance = desktop_results['lighthouse_result']['categories']['performance']['score']
             fig = create_score_gauge(desktop_performance, "Performance Score")
             st.plotly_chart(fig, use_container_width=True)
-            
+
             # Display key metrics
             st.markdown("### Key Metrics")
             metrics = desktop_results['lighthouse_result']['audits']
             categories = desktop_results['lighthouse_result']['categories']
-            
-            col1, col2 = st.columns(2)
+
+            col1, col2 = st.columns([1, 1]) if use_wide_layout else st.columns([1])
             with col1:
                 st.markdown("#### Loading Metrics")
                 st.metric("First Contentful Paint (FCP)", 
@@ -37,7 +38,7 @@ def display_metrics(desktop_results: dict, mobile_results: dict):
                          f"{metrics['server-response-time']['displayValue']}")
                 st.metric("Time to Interactive (TTI)", 
                          f"{metrics['interactive']['displayValue']}")
-                
+
             with col2:
                 st.markdown("#### Interactivity & Visual Stability")
                 st.metric("Total Blocking Time (TBT)", 
@@ -46,7 +47,7 @@ def display_metrics(desktop_results: dict, mobile_results: dict):
                          f"{metrics.get('interaction-to-next-paint', {}).get('displayValue', 'N/A')}")
                 st.metric("Cumulative Layout Shift (CLS)", 
                          f"{metrics['cumulative-layout-shift']['displayValue']}")
-            
+
             st.markdown("### Scores")
             score_col1, score_col2, score_col3, score_col4 = st.columns(4)
             with score_col1:
@@ -61,16 +62,16 @@ def display_metrics(desktop_results: dict, mobile_results: dict):
             with score_col4:
                 st.metric("Best Practices", 
                          f"{int(categories['best-practices']['score'] * 100)}%")
-    
+
     with tab3:
         st.subheader("Mobile Analysis")
-        col1, col2 = st.columns(2)
-        
+        col1, col2 = st.columns([1, 1]) if use_wide_layout else st.columns([1])
+
         with col1:
             mobile_performance = mobile_results['lighthouse_result']['categories']['performance']['score']
             fig = create_score_gauge(mobile_performance, "Performance Score")
             st.plotly_chart(fig, use_container_width=True)
-            
+
             # Display key metrics
             st.markdown("### Key Metrics")
             metrics = mobile_results['lighthouse_result']['audits']

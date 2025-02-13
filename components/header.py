@@ -2,15 +2,36 @@ import streamlit as st
 
 def render_header():
     """Render the application header with 3D effects and credits"""
-    # Custom CSS for 3D effects
+    # Custom CSS for 3D effects and dark mode
     st.markdown("""
         <style>
+        @keyframes rotate {
+            from { transform: rotate3d(0, 1, 0, 0deg); }
+            to { transform: rotate3d(0, 1, 0, 360deg); }
+        }
+        
+        .earth-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(24, 98, 204, 0.1) 0%, rgba(13, 37, 87, 0.1) 100%);
+            z-index: -1;
+            animation: rotate 60s linear infinite;
+            pointer-events: none;
+        }
+        
         .title-3d {
-            font-size: 3em;
+            font-size: min(3em, 10vw);
             color: #FF4B4B;
             text-shadow: 2px 2px 0px #B83333,
                          4px 4px 0px #982B2B;
             padding: 20px 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            margin: 20px;
         }
         .credits {
             font-style: italic;
