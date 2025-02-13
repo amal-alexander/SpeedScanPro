@@ -30,28 +30,34 @@ def get_score_color(score: float) -> str:
 def create_comparison_chart(desktop_data: dict, mobile_data: dict):
     """Create comparison chart for desktop vs mobile metrics"""
     categories = ['Performance', 'Accessibility', 'Best Practices', 'SEO']
-    desktop_scores = [
-        desktop_data['lighthouse_result']['categories'][cat.lower().replace(' ', '')]['score'] * 100 
-        for cat in categories
-    ]
-    mobile_scores = [
-        mobile_data['lighthouse_result']['categories'][cat.lower().replace(' ', '')]['score'] * 100 
-        for cat in categories
-    ]
+    category_keys = ['performance', 'accessibility', 'best-practices', 'seo']
 
-    df = pd.DataFrame({
-        'Category': categories * 2,
-        'Score': desktop_scores + mobile_scores,
-        'Device': ['Desktop'] * 4 + ['Mobile'] * 4
-    })
+    try:
+        desktop_scores = [
+            desktop_data['lighthouse_result']['categories'][key]['score'] * 100 
+            for key in category_keys
+        ]
+        mobile_scores = [
+            mobile_data['lighthouse_result']['categories'][key]['score'] * 100 
+            for key in category_keys
+        ]
 
-    fig = px.bar(
-        df,
-        x='Category',
-        y='Score',
-        color='Device',
-        barmode='group',
-        title='Desktop vs Mobile Comparison'
-    )
+        df = pd.DataFrame({
+            'Category': categories * 2,
+            'Score': desktop_scores + mobile_scores,
+            'Device': ['Desktop'] * 4 + ['Mobile'] * 4
+        })
 
-    return fig
+        fig = px.bar(
+            df,
+            x='Category',
+            y='Score',
+            color='Device',
+            barmode='group',
+            title='Desktop vs Mobile Comparison'
+        )
+
+        return fig
+    except KeyError as e:
+        st.error(f"Error creating comparison chart: Missing data for {str(e)}")
+        return None

@@ -36,33 +36,46 @@ class PageSpeedInsightsAPI:
             if 'lighthouseResult' not in data:
                 raise Exception("Invalid API response: No lighthouse results found")
 
-            # Restructure the response to match our expected format
-            return {
+            # Get categories with proper error handling
+            categories = data['lighthouseResult']['categories']
+
+            # Map API response keys to our standardized format
+            category_mapping = {
+                'performance': 'performance',
+                'accessibility': 'accessibility',
+                'best-practices': 'bestPractices',  # API uses camelCase
+                'seo': 'seo'
+            }
+
+            # Restructure the response with proper error handling
+            result = {
                 'lighthouse_result': {
-                    'categories': {
-                        'performance': {
-                            'score': data['lighthouseResult']['categories']['performance']['score']
-                        },
-                        'accessibility': {
-                            'score': data['lighthouseResult']['categories']['accessibility']['score']
-                        },
-                        'best-practices': {
-                            'score': data['lighthouseResult']['categories']['bestPractices']['score']
-                        },
-                        'seo': {
-                            'score': data['lighthouseResult']['categories']['seo']['score']
-                        }
-                    },
-                    'audits': {
-                        'first-contentful-paint': {
-                            'displayValue': data['lighthouseResult']['audits']['first-contentful-paint']['displayValue']
-                        },
-                        'interactive': {
-                            'displayValue': data['lighthouseResult']['audits']['interactive']['displayValue']
-                        }
-                    }
+                    'categories': {},
+                    'audits': {}
                 }
             }
+
+            # Process categories
+            for our_key, api_key in category_mapping.items():
+                if api_key in categories:
+                    result['lighthouse_result']['categories'][our_key] = {
+                        'score': categories[api_key]['score']
+                    }
+                else:
+                    raise Exception(f"Missing category in API response: {api_key}")
+
+            # Process audits
+            audits = data['lighthouseResult'].get('audits', {})
+            required_audits = ['first-contentful-paint', 'interactive']
+
+            for audit_key in required_audits:
+                if audit_key in audits:
+                    result['lighthouse_result']['audits'][audit_key] = {
+                        'displayValue': audits[audit_key].get('displayValue', 'N/A')
+                    }
+
+            return result
+
         except requests.exceptions.RequestException as e:
             raise Exception(f"Failed to fetch metrics: {str(e)}")
         except KeyError as e:
