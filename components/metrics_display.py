@@ -79,11 +79,21 @@ def display_metrics(desktop_results: dict, mobile_results: dict):
                 f"{int(metrics['cumulative-layout-shift']['score'] * 100)}%"
             ]
         })
-        st.table(metrics_df.style.set_properties(**{
-            'text-align': 'left',
-            'font-size': '14px',
-            'padding': '10px'
-        }))
+        st.table(metrics_df.style
+                .set_properties(**{
+                    'text-align': 'left',
+                    'font-size': '14px',
+                    'padding': '12px',
+                    'background-color': 'transparent'
+                })
+                .set_table_styles([{
+                    'selector': 'td, th',
+                    'props': [
+                        ('background-color', 'transparent'),
+                        ('color', 'white'),
+                        ('border-bottom', '1px solid rgba(255, 255, 255, 0.1)')
+                    ]
+                }]))
 
         st.markdown("### Overall Scores")
         scores_df = pd.DataFrame({
@@ -95,11 +105,21 @@ def display_metrics(desktop_results: dict, mobile_results: dict):
                 f"{int(categories['best-practices']['score'] * 100)}%"
             ]
         })
-        st.table(scores_df.style.set_properties(**{
-            'text-align': 'left',
-            'font-size': '14px',
-            'padding': '10px'
-        }))
+        st.table(scores_df.style
+                .set_properties(**{
+                    'text-align': 'left',
+                    'font-size': '14px',
+                    'padding': '12px',
+                    'background-color': 'transparent'
+                })
+                .set_table_styles([{
+                    'selector': 'td, th',
+                    'props': [
+                        ('background-color', 'transparent'),
+                        ('color', 'white'),
+                        ('border-bottom', '1px solid rgba(255, 255, 255, 0.1)')
+                    ]
+                }]))
 
     with tab2:
         display_detailed_metrics(desktop_results, "Desktop")
