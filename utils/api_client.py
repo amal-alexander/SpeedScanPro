@@ -39,15 +39,7 @@ class PageSpeedInsightsAPI:
             # Get categories with proper error handling
             categories = data['lighthouseResult']['categories']
 
-            # Map API response keys to our standardized format
-            category_mapping = {
-                'performance': 'performance',
-                'accessibility': 'accessibility',
-                'best-practices': 'bestPractices',  # API uses camelCase
-                'seo': 'seo'
-            }
-
-            # Restructure the response with proper error handling
+            # Standardize the response format
             result = {
                 'lighthouse_result': {
                     'categories': {},
@@ -55,14 +47,39 @@ class PageSpeedInsightsAPI:
                 }
             }
 
-            # Process categories
-            for our_key, api_key in category_mapping.items():
-                if api_key in categories:
-                    result['lighthouse_result']['categories'][our_key] = {
-                        'score': categories[api_key]['score']
-                    }
-                else:
-                    raise Exception(f"Missing category in API response: {api_key}")
+            # Process categories with flexible key matching
+            category_keys = {
+                'performance': ['performance'],
+                'accessibility': ['accessibility'],
+                'best-practices': ['best-practices', 'bestPractices'],
+                'seo': ['seo']
+            }
+
+            for our_key, possible_keys in category_keys.items():
+                found = False
+                for api_key in possible_keys:
+                    if api_key in categories:
+                        result['lighthouse_result']['categories'][our_key] = {
+                            'score': categories[api_key]['score']
+                        }
+                        found = True
+                        break
+                if not found:
+                    # Try alternative key formats
+                    kebab_key = our_key.replace('_', '-')
+                    camel_key = ''.join(word.capitalize() if i > 0 else word 
+                                      for i, word in enumerate(our_key.split('-')))
+                    if kebab_key in categories:
+                        result['lighthouse_result']['categories'][our_key] = {
+                            'score': categories[kebab_key]['score']
+                        }
+                    elif camel_key in categories:
+                        result['lighthouse_result']['categories'][our_key] = {
+                            'score': categories[camel_key]['score']
+                        }
+                    else:
+                        available_keys = ', '.join(categories.keys())
+                        raise Exception(f"Missing category in API response. Looking for '{our_key}' but found: {available_keys}")
 
             # Process audits
             audits = data['lighthouseResult'].get('audits', {})
