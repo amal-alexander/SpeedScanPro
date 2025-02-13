@@ -6,6 +6,7 @@ from components.metrics_display import display_metrics
 from components.report_generator import generate_report
 import asyncio
 import re
+import traceback
 
 # Page configuration
 st.set_page_config(
@@ -103,7 +104,19 @@ def main():
                 )
 
             except Exception as e:
-                st.error(f"An error occurred: {str(e)}")
+                error_msg = str(e)
+                if "API key not found" in error_msg:
+                    st.error("⚠️ Configuration Error: The PageSpeed Insights API key is not properly set up. Please contact support.")
+                elif "Failed to fetch metrics" in error_msg:
+                    st.error("🌐 Network Error: Unable to fetch data from Google PageSpeed Insights. Please try again later.")
+                elif "Invalid API response" in error_msg:
+                    st.error("🚫 API Error: Received invalid response from PageSpeed Insights. Please try again later.")
+                else:
+                    st.error(f"❌ An unexpected error occurred: {error_msg}")
+
+                # Log the full error for debugging
+                st.write("Debug information:")
+                st.code(traceback.format_exc())
 
 if __name__ == "__main__":
     main()
