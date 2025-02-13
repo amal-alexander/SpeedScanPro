@@ -4,9 +4,14 @@ from utils.seo_analyzer import SEOAnalyzer
 from components.header import render_header
 from components.metrics_display import display_metrics
 from components.report_generator import generate_report
+from components.bulk_upload import render_upload_section
 import asyncio
 import re
 import traceback
+import pandas as pd
+import json
+from typing import List, Dict
+import io
 
 # Page configuration
 st.set_page_config(
@@ -51,57 +56,120 @@ def validate_url(url):
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
     return bool(pattern.match(url))
 
+def analyze_url(api_client: PageSpeedInsightsAPI, url: str) -> Dict:
+    """Analyze a single URL"""
+    desktop_results = api_client.get_metrics(url, strategy="desktop")
+    mobile_results = api_client.get_metrics(url, strategy="mobile")
+
+    return {
+        'url': url,
+        'desktop': desktop_results,
+        'mobile': mobile_results
+    }
+
+def export_results(results: List[Dict], format: str):
+    """Export results in the specified format"""
+    if format == 'json':
+        return json.dumps(results, indent=2)
+
+    # Flatten results for CSV/Excel
+    flattened_data = []
+    for result in results:
+        row = {
+            'URL': result['url'],
+            'Desktop Performance': result['desktop']['lighthouse_result']['categories']['performance']['score'] * 100,
+            'Desktop Accessibility': result['desktop']['lighthouse_result']['categories']['accessibility']['score'] * 100,
+            'Desktop Best Practices': result['desktop']['lighthouse_result']['categories']['best-practices']['score'] * 100,
+            'Desktop SEO': result['desktop']['lighthouse_result']['categories']['seo']['score'] * 100,
+            'Mobile Performance': result['mobile']['lighthouse_result']['categories']['performance']['score'] * 100,
+            'Mobile Accessibility': result['mobile']['lighthouse_result']['categories']['accessibility']['score'] * 100,
+            'Mobile Best Practices': result['mobile']['lighthouse_result']['categories']['best-practices']['score'] * 100,
+            'Mobile SEO': result['mobile']['lighthouse_result']['categories']['seo']['score'] * 100
+        }
+        flattened_data.append(row)
+
+    df = pd.DataFrame(flattened_data)
+
+    if format == 'csv':
+        return df.to_csv(index=False)
+    elif format == 'excel':
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            df.to_excel(writer, sheet_name='Analysis Results', index=False)
+        return output.getvalue()
+
 def main():
     render_header()
 
-    # URL input with styled container
-    st.markdown("""
-        <div style='background: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);'>
-        <h2 style='color: #333; margin-bottom: 15px;'>Enter Website URL</h2>
-        </div>
-    """, unsafe_allow_html=True)
+    # Get URLs from bulk upload or single input
+    urls = render_upload_section()
+    single_url = st.text_input("Or analyze a single URL:", placeholder="https://example.com")
 
-    url = st.text_input("", placeholder="https://example.com")
+    if single_url:
+        urls = [single_url]
 
     # Centered submit button
     col1, col2, col3 = st.columns([1,1,1])
     with col2:
-        analyze_button = st.button("🚀 Analyze Website")
+        analyze_button = st.button("🚀 Analyze Websites")
 
-    if url and analyze_button:
-        if not validate_url(url):
-            st.error("Please enter a valid URL including http:// or https://")
+    if urls and analyze_button:
+        invalid_urls = [url for url in urls if not validate_url(url)]
+        if invalid_urls:
+            st.error(f"Invalid URLs found: {', '.join(invalid_urls)}")
             return
 
-        with st.spinner("🔍 Analyzing your website..."):
+        with st.spinner("🔍 Analyzing websites..."):
             try:
                 # Initialize API client and analyzer
                 api_client = PageSpeedInsightsAPI()
-                seo_analyzer = SEOAnalyzer()
+                all_results = []
 
-                # Get desktop metrics
-                desktop_results = api_client.get_metrics(url, strategy="desktop")
+                progress_bar = st.progress(0)
+                for i, url in enumerate(urls):
+                    with st.expander(f"Analyzing {url}", expanded=True):
+                        try:
+                            result = analyze_url(api_client, url)
+                            all_results.append(result)
+                            # Show individual results
+                            display_metrics(result['desktop'], result['mobile'])
+                        except Exception as e:
+                            st.error(f"Error analyzing {url}: {str(e)}")
+                    progress_bar.progress((i + 1) / len(urls))
 
-                # Get mobile metrics
-                mobile_results = api_client.get_metrics(url, strategy="mobile")
+                if all_results:
+                    st.success(f"✅ Analysis completed for {len(all_results)} URLs")
 
-                # Display metrics
-                display_metrics(desktop_results, mobile_results)
+                    # Export options
+                    st.subheader("Export Results")
+                    export_format = st.selectbox(
+                        "Choose export format:",
+                        ['json', 'csv', 'excel']
+                    )
 
-                # Generate downloadable report
-                report_data = generate_report(url, desktop_results, mobile_results)
+                    export_data = export_results(all_results, export_format)
 
-                # Styled download button
-                st.markdown("""
-                    <div style='text-align: center; margin-top: 30px;'>
-                    </div>
-                """, unsafe_allow_html=True)
-                st.download_button(
-                    label="📊 Download Full Report",
-                    data=report_data,
-                    file_name="seo_audit_report.html",
-                    mime="text/html"
-                )
+                    if export_format == 'json':
+                        st.download_button(
+                            "📥 Download JSON Report",
+                            export_data,
+                            file_name="seo_audit_results.json",
+                            mime="application/json"
+                        )
+                    elif export_format == 'csv':
+                        st.download_button(
+                            "📥 Download CSV Report",
+                            export_data,
+                            file_name="seo_audit_results.csv",
+                            mime="text/csv"
+                        )
+                    else:  # excel
+                        st.download_button(
+                            "📥 Download Excel Report",
+                            export_data,
+                            file_name="seo_audit_results.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        )
 
             except Exception as e:
                 error_msg = str(e)
