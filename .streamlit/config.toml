@@ -9,9 +9,3 @@ primaryColor = "#FF4B4B"
 backgroundColor = "#0E1117"
 secondaryBackgroundColor = "#1E2329"
 textColor = "#E6E6E6"
-
-[theme.dark]
-primaryColor = "#FF4B4B"
-backgroundColor = "#0E1117"
-secondaryBackgroundColor = "#1E2329"
-textColor = "#E6E6E6"
