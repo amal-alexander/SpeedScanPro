@@ -22,7 +22,7 @@ def render_header():
             pointer-events: none;
         }
         
-        .title-3d {
+        .title-3d, .section-title {
             font-size: min(3em, 10vw);
             color: #FF4B4B;
             text-shadow: 2px 2px 0px #B83333,
@@ -32,6 +32,11 @@ def render_header():
             backdrop-filter: blur(5px);
             border-radius: 15px;
             margin: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .section-title {
+            font-size: min(2em, 8vw);
         }
         .credits {
             font-style: italic;
@@ -124,8 +129,8 @@ def render_header():
 
     # Features in 3D box
     st.markdown("""
+    <h2 class="section-title">Features</h2>
     <div class="features-box">
-        <h3>Features</h3>
         <div class="feature-grid">
             <div class="feature-item">
                 <span class="feature-icon">🚀</span>

@@ -51,8 +51,8 @@ def show_url_preview(urls: List[str], max_preview: int = 5) -> None:
 def render_upload_section():
     """Render the bulk upload section"""
     st.markdown("""
+    <h2 class="section-title">Bulk URL Analysis</h2>
     <div style='background: rgba(30, 35, 41, 0.75); padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1);'>
-        <h3 style='margin-top: 0; color: #FF4B4B;'>Bulk URL Analysis</h3>
         <p style='color: white;'>Upload a file containing URLs to analyze multiple websites at once.</p>
         <p style='color: white; margin-bottom: 10px;'>Supported formats:</p>
         <ul style='color: white; list-style-type: none; padding-left: 0;'>
