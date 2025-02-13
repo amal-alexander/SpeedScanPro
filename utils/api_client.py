@@ -83,7 +83,15 @@ class PageSpeedInsightsAPI:
 
             # Process audits
             audits = data['lighthouseResult'].get('audits', {})
-            required_audits = ['first-contentful-paint', 'interactive']
+            required_audits = [
+                'first-contentful-paint',
+                'interactive',
+                'largest-contentful-paint',
+                'cumulative-layout-shift',
+                'total-blocking-time',
+                'server-response-time',
+                'interaction-to-next-paint'
+            ]
 
             for audit_key in required_audits:
                 if audit_key in audits:
