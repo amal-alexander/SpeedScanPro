@@ -52,6 +52,44 @@ def render_header():
         </style>
         """, unsafe_allow_html=True)
 
+    # Custom CSS for header components
+    st.markdown("""
+    <style>
+    .title-3d {
+        text-align: center;
+        color: white;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    .credits {
+        text-align: center;
+        color: white;
+        margin-bottom: 2rem;
+    }
+    .features-box {
+        background: rgba(30, 35, 41, 0.75);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+    .features-box h3 {
+        margin-bottom: 1rem;
+        color: #FF4B4B;
+    }
+    .features-box ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+    .features-box li {
+        padding: 0.5rem 0;
+        margin-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     # Title with 3D effect
     st.markdown('<h1 class="title-3d">🔍 SEO Audit Tool</h1>', unsafe_allow_html=True)
 
@@ -61,14 +99,12 @@ def render_header():
     # Features in 3D box
     st.markdown("""
     <div class="features-box">
-    <h3>Features:</h3>
-    <ul>
-        <li>Page Speed Analysis</li>
-        <li>Mobile & Desktop Performance</li>
-        <li>On-page SEO Analysis</li>
-        <li>Downloadable Reports</li>
-    </ul>
+        <h3>Features:</h3>
+        <ul>
+            <li>Page Speed Analysis</li>
+            <li>Mobile & Desktop Performance</li>
+            <li>On-page SEO Analysis</li>
+            <li>Downloadable Reports</li>
+        </ul>
     </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("---")
+    """, unsafe_allow_html=True)("---")
