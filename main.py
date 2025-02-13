@@ -28,11 +28,21 @@ st.markdown("""
         background: linear-gradient(135deg, #0E1117 0%, #1E2329 100%);
     }
     .stDataFrame {
-        background: rgba(30, 35, 41, 0.75) !important;
+        background: transparent !important;
         border-radius: 8px !important;
     }
     .stDataFrame td, .stDataFrame th {
         color: white !important;
+        background: transparent !important;
+    }
+    div[data-testid="stMarkdown"] {
+        background: transparent !important;
+    }
+    div[data-testid="stTable"] {
+        background: transparent !important;
+    }
+    .stTable td, .stTable th {
+        background: transparent !important;
     }
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
