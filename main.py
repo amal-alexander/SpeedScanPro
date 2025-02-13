@@ -17,8 +17,37 @@ import io
 st.set_page_config(
     page_title="SEO Audit Tool",
     page_icon="🔍",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
+
+# Custom styling
+st.markdown("""
+    <style>
+    .main {
+        background: linear-gradient(135deg, #0E1117 0%, #1E2329 100%);
+    }
+    .stDataFrame {
+        background: rgba(30, 35, 41, 0.75) !important;
+        border-radius: 8px !important;
+    }
+    .stDataFrame td, .stDataFrame th {
+        color: white !important;
+    }
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        background-color: rgba(30, 35, 41, 0.75);
+        border-radius: 4px;
+        color: white;
+        padding: 8px 16px;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #FF4B4B !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # Custom CSS for button
 st.markdown("""
