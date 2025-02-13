@@ -14,12 +14,10 @@ from typing import List, Dict
 import io
 
 # Page configuration
-st.set_page_config(
-    page_title="SEO Audit Tool",
-    page_icon="🔍",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
+st.set_page_config(page_title="SEO Audit Tool",
+                   page_icon="🔍",
+                   layout="wide",
+                   initial_sidebar_state="collapsed")
 
 # Custom styling
 st.markdown("""
@@ -57,7 +55,8 @@ st.markdown("""
         background-color: #FF4B4B !important;
     }
     </style>
-""", unsafe_allow_html=True)
+""",
+            unsafe_allow_html=True)
 
 # Custom CSS for button
 st.markdown("""
@@ -81,7 +80,9 @@ st.markdown("""
         transform: translateY(1px);
     }
     </style>
-""", unsafe_allow_html=True)
+""",
+            unsafe_allow_html=True)
+
 
 @st.cache_data(ttl=3600)
 def validate_url(url):
@@ -95,16 +96,14 @@ def validate_url(url):
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
     return bool(pattern.match(url))
 
+
 def analyze_url(api_client: PageSpeedInsightsAPI, url: str) -> Dict:
     """Analyze a single URL"""
     desktop_results = api_client.get_metrics(url, strategy="desktop")
     mobile_results = api_client.get_metrics(url, strategy="mobile")
 
-    return {
-        'url': url,
-        'desktop': desktop_results,
-        'mobile': mobile_results
-    }
+    return {'url': url, 'desktop': desktop_results, 'mobile': mobile_results}
+
 
 def export_results(results: List[Dict], format: str):
     """Export results in the specified format"""
@@ -115,15 +114,32 @@ def export_results(results: List[Dict], format: str):
     flattened_data = []
     for result in results:
         row = {
-            'URL': result['url'],
-            'Desktop Performance': result['desktop']['lighthouse_result']['categories']['performance']['score'] * 100,
-            'Desktop Accessibility': result['desktop']['lighthouse_result']['categories']['accessibility']['score'] * 100,
-            'Desktop Best Practices': result['desktop']['lighthouse_result']['categories']['best-practices']['score'] * 100,
-            'Desktop SEO': result['desktop']['lighthouse_result']['categories']['seo']['score'] * 100,
-            'Mobile Performance': result['mobile']['lighthouse_result']['categories']['performance']['score'] * 100,
-            'Mobile Accessibility': result['mobile']['lighthouse_result']['categories']['accessibility']['score'] * 100,
-            'Mobile Best Practices': result['mobile']['lighthouse_result']['categories']['best-practices']['score'] * 100,
-            'Mobile SEO': result['mobile']['lighthouse_result']['categories']['seo']['score'] * 100
+            'URL':
+            result['url'],
+            'Desktop Performance':
+            result['desktop']['lighthouse_result']['categories']['performance']
+            ['score'] * 100,
+            'Desktop Accessibility':
+            result['desktop']['lighthouse_result']['categories']
+            ['accessibility']['score'] * 100,
+            'Desktop Best Practices':
+            result['desktop']['lighthouse_result']['categories']
+            ['best-practices']['score'] * 100,
+            'Desktop SEO':
+            result['desktop']['lighthouse_result']['categories']['seo']
+            ['score'] * 100,
+            'Mobile Performance':
+            result['mobile']['lighthouse_result']['categories']['performance']
+            ['score'] * 100,
+            'Mobile Accessibility':
+            result['mobile']['lighthouse_result']['categories']
+            ['accessibility']['score'] * 100,
+            'Mobile Best Practices':
+            result['mobile']['lighthouse_result']['categories']
+            ['best-practices']['score'] * 100,
+            'Mobile SEO':
+            result['mobile']['lighthouse_result']['categories']['seo']['score']
+            * 100
         }
         flattened_data.append(row)
 
@@ -137,18 +153,20 @@ def export_results(results: List[Dict], format: str):
             df.to_excel(writer, sheet_name='Analysis Results', index=False)
         return output.getvalue()
 
+
 def main():
     render_header()
 
     # Get URLs from bulk upload or single input
     urls = render_upload_section()
-    single_url = st.text_input("Or analyze a single URL:", placeholder="https://example.com")
+    single_url = st.text_input("Or analyze a single URL:",
+                               placeholder="https://example.com")
 
     if single_url:
         urls = [single_url]
 
     # Centered submit button
-    col1, col2, col3 = st.columns([1,1,1])
+    col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
         analyze_button = st.button("🚀 Analyze Websites")
 
@@ -171,59 +189,63 @@ def main():
                             result = analyze_url(api_client, url)
                             all_results.append(result)
                             # Show individual results
-                            display_metrics(result['desktop'], result['mobile'])
+                            display_metrics(result['desktop'],
+                                            result['mobile'])
                         except Exception as e:
                             st.error(f"Error analyzing {url}: {str(e)}")
                     progress_bar.progress((i + 1) / len(urls))
 
                 if all_results:
-                    st.success(f"✅ Analysis completed for {len(all_results)} URLs")
+                    st.success(
+                        f"✅ Analysis completed for {len(all_results)} URLs")
 
                     # Export options
                     st.subheader("Export Results")
-                    export_format = st.selectbox(
-                        "Choose export format:",
-                        ['json', 'csv', 'excel']
-                    )
+                    export_format = st.selectbox("Choose export format:",
+                                                 ['json', 'csv', 'excel'])
 
                     export_data = export_results(all_results, export_format)
 
                     if export_format == 'json':
-                        st.download_button(
-                            "📥 Download JSON Report",
-                            export_data,
-                            file_name="seo_audit_results.json",
-                            mime="application/json"
-                        )
+                        st.download_button("📥 Download JSON Report",
+                                           export_data,
+                                           file_name="seo_audit_results.json",
+                                           mime="application/json")
                     elif export_format == 'csv':
-                        st.download_button(
-                            "📥 Download CSV Report",
-                            export_data,
-                            file_name="seo_audit_results.csv",
-                            mime="text/csv"
-                        )
+                        st.download_button("📥 Download CSV Report",
+                                           export_data,
+                                           file_name="seo_audit_results.csv",
+                                           mime="text/csv")
                     else:  # excel
                         st.download_button(
                             "📥 Download Excel Report",
                             export_data,
                             file_name="seo_audit_results.xlsx",
-                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            mime=
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         )
 
             except Exception as e:
                 error_msg = str(e)
                 if "API key not found" in error_msg:
-                    st.error("⚠️ Configuration Error: The PageSpeed Insights API key is not properly set up. Please contact support.")
+                    st.error(
+                        "⚠️ Configuration Error: The PageSpeed Insights API key is not properly set up. Please contact support."
+                    )
                 elif "Failed to fetch metrics" in error_msg:
-                    st.error("🌐 Network Error: Unable to fetch data from Google PageSpeed Insights. Please try again later.")
+                    st.error(
+                        "🌐 Network Error: Unable to fetch data from Google PageSpeed Insights. Please try again later."
+                    )
                 elif "Invalid API response" in error_msg:
-                    st.error("🚫 API Error: Received invalid response from PageSpeed Insights. Please try again later.")
+                    st.error(
+                        "🚫 API Error: Received invalid response from PageSpeed Insights. Please try again later."
+                    )
                 else:
                     st.error(f"❌ An unexpected error occurred: {error_msg}")
 
                 # Log the full error for debugging
                 st.write("Debug information:")
                 st.code(traceback.format_exc())
+
 
 if __name__ == "__main__":
     main()
