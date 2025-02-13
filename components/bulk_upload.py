@@ -11,9 +11,9 @@ def parse_uploaded_file(uploaded_file) -> List[str]:
     """Parse URLs from uploaded file based on file type"""
     if uploaded_file is None:
         return []
-        
+
     file_type = uploaded_file.name.split('.')[-1].lower()
-    
+
     try:
         if file_type == 'txt':
             content = uploaded_file.getvalue().decode()
@@ -36,10 +36,10 @@ def show_url_preview(urls: List[str], max_preview: int = 5) -> None:
     if not urls:
         st.warning("No URLs found in the uploaded file.")
         return
-        
+
     st.subheader("URL Preview")
     preview_df = pd.DataFrame({"URLs": urls})
-    
+
     with st.expander(f"Preview ({len(urls)} URLs found)"):
         st.dataframe(
             preview_df.head(max_preview),
@@ -51,45 +51,38 @@ def show_url_preview(urls: List[str], max_preview: int = 5) -> None:
 def render_upload_section():
     """Render the bulk upload section"""
     st.markdown("""
-    <div class="features-box">
-        <h3>Bulk URL Analysis</h3>
-        <div class="feature-grid">
-            <div class="feature-item">
-                <span class="feature-icon">📊</span>
-                <span class="feature-text">CSV file (URLs in first column)</span>
-            </div>
-            <div class="feature-item">
-                <span class="feature-icon">📑</span>
-                <span class="feature-text">Excel file (URLs in first column)</span>
-            </div>
-            <div class="feature-item">
-                <span class="feature-icon">📝</span>
-                <span class="feature-text">Text file (one URL per line)</span>
-            </div>
-        </div>
+    <div style='background: rgba(30, 35, 41, 0.75); padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1);'>
+        <h3 style='margin-top: 0; color: #FF4B4B;'>Bulk URL Analysis</h3>
+        <p style='color: white;'>Upload a file containing URLs to analyze multiple websites at once.</p>
+        <p style='color: white; margin-bottom: 10px;'>Supported formats:</p>
+        <ul style='color: white; list-style-type: none; padding-left: 0;'>
+            <li style='padding: 5px 0;'>📊 CSV file (URLs in first column)</li>
+            <li style='padding: 5px 0;'>📑 Excel file (URLs in first column)</li>
+            <li style='padding: 5px 0;'>📝 Text file (one URL per line)</li>
+        </ul>
     </div>
     """, unsafe_allow_html=True)
-    
+
     uploaded_file = st.file_uploader(
         "Upload file containing URLs",
         type=['csv', 'xlsx', 'xls', 'txt'],
         help="Upload a file containing URLs to analyze"
     )
-    
+
     # Manual URL input
     manual_urls = st.text_area(
         "Or enter URLs manually (one per line)",
         height=100,
         help="Enter URLs manually, one URL per line"
     )
-    
+
     urls = []
     if uploaded_file:
         urls = parse_uploaded_file(uploaded_file)
     elif manual_urls:
         urls = parse_text_urls(manual_urls)
-        
+
     if urls:
         show_url_preview(urls)
-        
+
     return urls
