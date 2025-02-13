@@ -75,17 +75,43 @@ def render_header():
         color: white;
     }
     .features-box h3 {
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
         color: #FF4B4B;
+        text-align: center;
+        font-size: 1.5em;
     }
-    .features-box ul {
-        list-style-type: none;
-        padding-left: 0;
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        padding: 0.5rem;
     }
-    .features-box li {
-        padding: 0.5rem 0;
-        margin-bottom: 0.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    .feature-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        transition: transform 0.2s;
+    }
+    .feature-item:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.1);
+    }
+    .feature-icon {
+        font-size: 1.5em;
+        margin-right: 0.75rem;
+    }
+    .feature-text {
+        font-size: 1em;
+    }
+    .dev-link {
+        color: #FF4B4B;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .dev-link:hover {
+        color: #FF7676;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -94,18 +120,30 @@ def render_header():
     st.markdown('<h1 class="title-3d">🔍 SEO Audit Tool</h1>', unsafe_allow_html=True)
 
     # Developer credits
-    st.markdown('<p class="credits">Developed with ❤️ by Amal Alexander</p>', unsafe_allow_html=True)
+    st.markdown('<p class="credits">Developed with ❤️ by <a href="https://in.linkedin.com/in/amal-alexander-305780131" target="_blank" class="dev-link">Amal Alexander</a></p>', unsafe_allow_html=True)
 
     # Features in 3D box
     st.markdown("""
     <div class="features-box">
-        <h3>Features:</h3>
-        <ul>
-            <li>Page Speed Analysis</li>
-            <li>Mobile & Desktop Performance</li>
-            <li>On-page SEO Analysis</li>
-            <li>Downloadable Reports</li>
-        </ul>
+        <h3>Features</h3>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <span class="feature-icon">🚀</span>
+                <span class="feature-text">Page Speed Analysis</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📱</span>
+                <span class="feature-text">Mobile & Desktop Performance</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🔍</span>
+                <span class="feature-text">On-page SEO Analysis</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📊</span>
+                <span class="feature-text">Downloadable Reports</span>
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
