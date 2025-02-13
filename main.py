@@ -14,6 +14,30 @@ st.set_page_config(
     layout="wide"
 )
 
+# Custom CSS for button
+st.markdown("""
+    <style>
+    .stButton > button {
+        background: linear-gradient(45deg, #FF4B4B, #FF7676);
+        color: white;
+        padding: 0.75rem 2rem;
+        font-size: 1.2em;
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(255, 75, 75, 0.3);
+        transform: translateY(0);
+        transition: all 0.3s ease;
+    }
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 75, 75, 0.4);
+    }
+    .stButton > button:active {
+        transform: translateY(1px);
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 @st.cache_data(ttl=3600)
 def validate_url(url):
     """Validate URL format"""
@@ -28,41 +52,56 @@ def validate_url(url):
 
 def main():
     render_header()
-    
-    # URL input
-    url = st.text_input("Enter website URL to analyze", placeholder="https://example.com")
-    
-    if url:
+
+    # URL input with styled container
+    st.markdown("""
+        <div style='background: #f8f9fa; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);'>
+        <h2 style='color: #333; margin-bottom: 15px;'>Enter Website URL</h2>
+        </div>
+    """, unsafe_allow_html=True)
+
+    url = st.text_input("", placeholder="https://example.com")
+
+    # Centered submit button
+    col1, col2, col3 = st.columns([1,1,1])
+    with col2:
+        analyze_button = st.button("🚀 Analyze Website")
+
+    if url and analyze_button:
         if not validate_url(url):
             st.error("Please enter a valid URL including http:// or https://")
             return
-            
-        with st.spinner("Analyzing your website..."):
+
+        with st.spinner("🔍 Analyzing your website..."):
             try:
                 # Initialize API client and analyzer
                 api_client = PageSpeedInsightsAPI()
                 seo_analyzer = SEOAnalyzer()
-                
+
                 # Get desktop metrics
                 desktop_results = api_client.get_metrics(url, strategy="desktop")
-                
+
                 # Get mobile metrics
                 mobile_results = api_client.get_metrics(url, strategy="mobile")
-                
+
                 # Display metrics
                 display_metrics(desktop_results, mobile_results)
-                
+
                 # Generate downloadable report
                 report_data = generate_report(url, desktop_results, mobile_results)
-                
-                # Download button
+
+                # Styled download button
+                st.markdown("""
+                    <div style='text-align: center; margin-top: 30px;'>
+                    </div>
+                """, unsafe_allow_html=True)
                 st.download_button(
-                    label="Download Full Report",
+                    label="📊 Download Full Report",
                     data=report_data,
                     file_name="seo_audit_report.html",
                     mime="text/html"
                 )
-                
+
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
 
