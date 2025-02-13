@@ -53,13 +53,21 @@ def render_upload_section():
     st.markdown("""
     <h2 class="section-title">Bulk URL Analysis</h2>
     <div style='background: rgba(30, 35, 41, 0.75); padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1);'>
-        <p style='color: white;'>Upload a file containing URLs to analyze multiple websites at once.</p>
-        <p style='color: white; margin-bottom: 10px;'>Supported formats:</p>
-        <ul style='color: white; list-style-type: none; padding-left: 0;'>
-            <li style='padding: 5px 0;'>📊 CSV file (URLs in first column)</li>
-            <li style='padding: 5px 0;'>📑 Excel file (URLs in first column)</li>
-            <li style='padding: 5px 0;'>📝 Text file (one URL per line)</li>
-        </ul>
+        <p style='color: white; text-align: center;'>Upload a file containing URLs to analyze multiple websites at once.</p>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <span class="feature-icon">📊</span>
+                <span class="feature-text">CSV file (URLs in first column)</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📑</span>
+                <span class="feature-text">Excel file (URLs in first column)</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📝</span>
+                <span class="feature-text">Text file (one URL per line)</span>
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
