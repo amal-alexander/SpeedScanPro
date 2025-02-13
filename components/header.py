@@ -107,4 +107,6 @@ def render_header():
             <li>Downloadable Reports</li>
         </ul>
     </div>
-    """, unsafe_allow_html=True)("---")
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
